@@ -18,11 +18,19 @@ async def on_message(message):
     prompt = message.content
 
     # Görüntüyü ImgAPI aracılığıyla oluşturma
+    # Görüntüyü ImgAPI aracılığıyla oluşturma
     file_path = api.download_image(prompt)
 
-    # Görüntüyü kullanıcıya gönderme
-    with open(file_path, "rb") as photo:
-        await message.channel.send(file=discord.File(photo, "generated_image.jpg"))
+    # Eğer bir dosya yolu başarıyla döndüyse işlemleri yap
+    if file_path is not None:
+        with open(file_path, "rb") as photo:
+            await message.channel.send(file=discord.File(photo, "generated_image.jpg"))
+        
+        # Gönderildikten sonra görüntüyü silme
+        os.remove(file_path)
+    else:
+        # Görsel oluşturulamazsa kullanıcıya bilgi ver
+        await message.channel.send("Üzgünüm, bu komut için bir görsel oluşturamadım.")
 
     # Gönderildikten sonra görüntüyü silme
     os.remove(file_path)
